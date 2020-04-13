@@ -1,0 +1,16 @@
+Package: SaldaeDataExplorer
+Type: Package
+Title: Saldae Analytics Data Exploration pool  
+Version: 0.1
+Author: Farid Azouaou
+Maintainer: Farid Azouaou <contact@saldaeanalytics.com>
+Description: a set of function which enables to explore the data content  and draw up a preliminary exploratory analysis view
+Imports: 
+      readxl,
+      readr,
+      dplyr,
+      dlookr,
+      zoo
+License: MIT
+Encoding: UTF-8
+LazyData: true
