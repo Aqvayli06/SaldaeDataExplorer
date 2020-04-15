@@ -721,6 +721,7 @@ Handson_exploration <- function(tisefka = NULL, tisefka_report = NULL, numeric_v
   DF$Chart <- sapply(
     1:ncol(tisefka),
     function(x) {
+      if(!is.numeric(tisefka_density[, x]))return(NULL)
       jsonlite::toJSON(list(
         values = tisefka[, x],
         options = list(type = "line",col="green")
@@ -728,9 +729,11 @@ Handson_exploration <- function(tisefka = NULL, tisefka_report = NULL, numeric_v
       na="null")
     }
   )
+
   DF$Density <- sapply(
     1:ncol(tisefka),
     function(x) {
+      if(!is.numeric(tisefka_density[, x]))return(NULL)
       jsonlite::toJSON(list(
         values = tisefka_density[, x],
         options = list(type = "line")
@@ -740,6 +743,7 @@ Handson_exploration <- function(tisefka = NULL, tisefka_report = NULL, numeric_v
   DF$Box <- sapply(
     1:ncol(tisefka),
     function(x) {
+      if(!is.numeric(tisefka_density[, x]))return(NULL)
       jsonlite::toJSON(list(
         values = tisefka[, x],
         options = list(type = "box")
