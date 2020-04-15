@@ -7,6 +7,17 @@ Maintainer: Farid Azouaou <contact@saldaeanalytics.com>
 Description: a set of function which enables to explore the data content  and draw up a preliminary exploratory analysis view
 Imports: 
       readxl,
+      htmlwidgets,
+      lubridate,
+      rhandsontable,
+      jsonlite,
+      tidyr,
+      forecast,
+      timetk,
+      seastests,
+      plotly,
+      reshape2,
+      DT,
       readr,
       dplyr,
       dlookr,
@@ -14,3 +25,4 @@ Imports:
 License: MIT
 Encoding: UTF-8
 LazyData: true
+RoxygenNote: 6.1.1

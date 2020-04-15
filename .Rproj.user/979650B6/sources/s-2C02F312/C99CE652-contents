@@ -137,7 +137,7 @@ sbed_tisefka <- function(tisefka = NULL, date_variable = NULL, SA_date_format = 
 #' @author Farid Azouaou
 #' @param ukud raw data
 #' @return vector of date format
-
+#' @export
 SA_date_format_yellan <- function(ukud = NULL) {
   date_format_yellan <- c(
     "YYYY-MM-DD", "YYYY/MM/DD", "YYYY.MM.DD", "YYYYMMDD",

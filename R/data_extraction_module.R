@@ -116,7 +116,7 @@ sbed_tisefka <- function(tisefka = NULL, date_variable = NULL, SA_date_format = 
   DATE_index <- which(date_variable == colnames(tisefka))
   Date_telha <- IsDate(mydate = head(tisefka[, DATE_index]), SA_date_format = SA_date_format)
   if (!FALSE %in% Date_telha) {
-    colnames(tisefka)[DATE_index] <- "DATE"
+    colnames(tisefka)[DATE_index] <- "date"
   } else {
     return(NULL)
   }
@@ -127,9 +127,9 @@ sbed_tisefka <- function(tisefka = NULL, date_variable = NULL, SA_date_format = 
     # tisefka3<<-tisefka
   }
 
-  tisefka <- tisefka %>% dplyr::distinct(DATE, .keep_all = TRUE)
+  tisefka <- tisefka %>% dplyr::distinct(date, .keep_all = TRUE)
   warning("There is high risk, that duplicated data are overwritten!!!!")
-  rownames(tisefka) <- tisefka[, "DATE"]
+  rownames(tisefka) <- tisefka[, "date"]
   return(tisefka)
 }
 
@@ -137,7 +137,7 @@ sbed_tisefka <- function(tisefka = NULL, date_variable = NULL, SA_date_format = 
 #' @author Farid Azouaou
 #' @param ukud raw data
 #' @return vector of date format
-
+#' @export
 SA_date_format_yellan <- function(ukud = NULL) {
   date_format_yellan <- c(
     "YYYY-MM-DD", "YYYY/MM/DD", "YYYY.MM.DD", "YYYYMMDD",
@@ -151,8 +151,8 @@ SA_date_format_yellan <- function(ukud = NULL) {
 #' @param tifeka raw data
 #' @return tbl_df object
 fren_tisefka <- function(tifeka = NULL) {
-  # tisefka    <- tisefka %>% dplyr::distinct(DATE, .keep_all = TRUE)
-  tisefka <- tisefka %>% dplyr::arrange(as.POSIXct(DATE, tz = "CET"), .by_group = TRUE)
+  # tisefka    <- tisefka %>% dplyr::distinct(date, .keep_all = TRUE)
+  tisefka <- tisefka %>% dplyr::arrange(as.POSIXct(date, tz = "CET"), .by_group = TRUE)
 }
 
 

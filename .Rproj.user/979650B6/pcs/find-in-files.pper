@@ -1,0 +1,10 @@
+{
+    "dialog-state" : {
+        "caseSensitive" : false,
+        "filePatterns" : [
+        ],
+        "path" : "~/Saldae_Analytics/SaldaePackages/SaldaeDataExplorer",
+        "query" : "data_diagnosis_f",
+        "regex" : false
+    }
+}
