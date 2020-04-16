@@ -14,6 +14,10 @@ sbed_tisefka(tisefka = NULL, date_variable = NULL,
 \item{date_variable}{variable to use as date}
 
 \item{SA_date_format}{date format}
+
+\item{spread_value}{value to spread data}
+
+\item{spread_key}{group category to use to spread data}
 }
 \value{
 raw data ready to explore and to analyze

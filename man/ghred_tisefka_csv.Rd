@@ -6,6 +6,9 @@
 \usage{
 ghred_tisefka_csv(input_file = NULL)
 }
+\arguments{
+\item{input_file}{input file}
+}
 \value{
 tbl_df object
 }

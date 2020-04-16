@@ -1,6 +1,6 @@
 #' Read data from inputfile (CSV)
 #' @author Farid Azouaou
-#' @param input_file
+#' @param input_file input file
 #' @return tbl_df object
 
 ghred_tisefka_csv <- function(input_file = NULL) {
@@ -35,7 +35,7 @@ ghred_tisefka_excel <- function(input_file = NULL, tawriqt = NULL) {
 
 #' Read data main function
 #' @author Farid Azouaou
-#' @param input_file
+#' @param input_file input file
 #' @param tala data source (CSV/Excel/Database)
 #' @param tawriqt excel sheet name
 #' @return tbl_df object
@@ -103,8 +103,8 @@ tisefka_spread_yella <- function(tisefka = NULL, date_index = NULL) {
 #' @param tisefka raw data(uploaded from inputfile)
 #' @param date_variable variable to use as date
 #' @param SA_date_format date format
-#' @param spread_value
-#' @param spread_key
+#' @param spread_value value to spread data
+#' @param spread_key   group category to use to spread data
 #' @return raw data ready to explore and to analyze
 #' @export
 

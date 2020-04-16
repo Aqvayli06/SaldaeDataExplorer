@@ -7,6 +7,8 @@
 ghred_tisefka_aqerru(input_file = NULL, tala = NULL, tawriqt = NULL)
 }
 \arguments{
+\item{input_file}{input file}
+
 \item{tala}{data source (CSV/Excel/Database)}
 
 \item{tawriqt}{excel sheet name}

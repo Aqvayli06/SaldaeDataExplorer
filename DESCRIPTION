@@ -21,7 +21,11 @@ Imports:
       readr,
       dplyr,
       dlookr,
-      zoo
+      zoo,
+      anomalize,
+      AnomalyDetection,
+      purrr,
+      imputeTS
 License: MIT
 Encoding: UTF-8
 LazyData: true

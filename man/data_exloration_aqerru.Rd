@@ -4,15 +4,12 @@
 \alias{data_exloration_aqerru}
 \title{Data Exploration Main wrapper function}
 \usage{
-data_exloration_aqerru(tisefka = NULL, tisefka_report = NULL,
-  sdukkel = NULL, sdukkel_ih = NULL, aggregation_metric = NULL,
-  time_unit = NULL, base_unit = NULL, target_ts = NULL,
-  ts_actions = NULL)
+data_exloration_aqerru(tisefka = NULL, sdukkel = NULL,
+  sdukkel_ih = NULL, aggregation_metric = NULL, time_unit = NULL,
+  base_unit = NULL, target_ts = NULL, ts_actions = NULL)
 }
 \arguments{
 \item{tisefka}{data frame including date variable}
-
-\item{tisefka_report}{exploratory report of raw data}
 
 \item{sdukkel}{group by a discrete variable}
 
@@ -23,6 +20,8 @@ data_exloration_aqerru(tisefka = NULL, tisefka_report = NULL,
 \item{time_unit}{time unit of the aggregated data}
 
 \item{base_unit}{time unit of the raw data}
+
+\item{tisefka_report}{exploratory report of raw data}
 }
 \value{
 list containing aggregated data with seasonally adjusted and anomaly detection infrmation

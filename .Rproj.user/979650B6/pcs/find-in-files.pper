@@ -3,8 +3,8 @@
         "caseSensitive" : false,
         "filePatterns" : [
         ],
-        "path" : "~/Saldae_Analytics/SaldaePackages/SaldaeDataExplorer",
-        "query" : "sparkline",
+        "path" : "~/Saldae_Analytics/SaldaeAnalyticsProd/R",
+        "query" : "anomaly_detection_nnegh",
         "regex" : false
     }
 }

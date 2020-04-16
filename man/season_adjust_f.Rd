@@ -4,12 +4,12 @@
 \alias{season_adjust_f}
 \title{Seasonal Adjustement}
 \usage{
-season_adjust_f(ts_x = NULL, time_unit = NULL)
+season_adjust_f(tisefka = NULL, time_unit = NULL)
 }
 \arguments{
-\item{ts_x}{target time series}
-
 \item{time_unit}{time unit used to detect frequency}
+
+\item{ts_x}{target time series}
 }
 \value{
 a list containing frequency and seasonally adjusted time serie

@@ -4,14 +4,11 @@
 \alias{data_aggregation_f}
 \title{Data Aggregation based on a given time unit and grouping pattern}
 \usage{
-data_aggregation_f(tisefka = NULL, tisefka_report = NULL,
-  time_unit = NULL, base_unit = NULL, target_ts = NULL,
-  sdukkel = NULL)
+data_aggregation_f(tisefka = NULL, time_unit = NULL,
+  base_unit = NULL, target_ts = NULL, sdukkel = NULL)
 }
 \arguments{
 \item{tisefka}{data frame including date variable}
-
-\item{tisefka_report}{exploratory report of raw data}
 
 \item{time_unit}{time unit of the aggregated data}
 
