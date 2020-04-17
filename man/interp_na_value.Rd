@@ -5,7 +5,7 @@
 \title{Saldae missing data interpolation}
 \usage{
 interp_na_value(ts_x = NULL, interp_mode = "spline",
-  logic = "na.seadec")
+  logic = "na_seadec")
 }
 \arguments{
 \item{ts_x}{time serie}

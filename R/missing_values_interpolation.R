@@ -15,7 +15,7 @@
 #' @param logic interpolation logic
 #' @return a vector containing a complete time series without NAs
 #' @export
-interp_na_value <- function(ts_x = NULL, interp_mode = "spline", logic = "na.seadec") {
+interp_na_value <- function(ts_x = NULL, interp_mode = "spline", logic = "na_seadec") {
 
   if (all(!is.na(ts_x)) == TRUE)return(ts_x)
   # start_point <- length(ts_x) - length(zoo::na.trim(ts_x, sides = "left")) + 1
@@ -23,15 +23,15 @@ interp_na_value <- function(ts_x = NULL, interp_mode = "spline", logic = "na.sea
 
   # . possible modes : "interpolation","locf","mq","mean","kalman","random"
   if (logic == "seasplit") {
-    if (mode %in% c("linear", "spline", "stine")) {
-      ts_x <- na.seasplit(x = ts_x, algorithm = "interpolation", option = mode)
+    if (interp_mode %in% c("linear", "spline", "stine")) {
+      ts_x <- na.seasplit(x = ts_x, algorithm = "interpolation", option = interp_mode)
     } else {
       ts_x <- na.seasplit(x = ts_x, algorithm = mode)
     }
-  } else if (logic == "na.seadec") {
+  } else if (logic == "na_seadec") {
     # . Seasonally Decomposed Missing Value Imputation
-    if (mode %in% c("linear", "spline", "stine")) {
-      ts_x <- imputeTS::na_seadec(x = ts(ts_x), algorithm = "interpolation", option = interp_mode,find_frequency=TRUE)
+    if (interp_mode %in% c("linear", "spline", "stine")) {
+      ts_x <- imputeTS::na_seadec(x = ts_x, algorithm = "interpolation", option = interp_mode)
     } else {
       ts_x <- imputeTS::na_seadec(x = ts_x, algorithm = interp_mode,find_frequency=TRUE)
     }

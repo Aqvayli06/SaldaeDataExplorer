@@ -72,31 +72,31 @@ data_aggregation_f <- function(tisefka = NULL, time_unit = NULL, base_unit = NUL
     #   target_dat$sdukkel <- target_ts
     #   sdukkel <- target_ts
     # }
-    # target_dat["date"] <- rownames(tisefka)
+
     upper_summary_mean <- target_dat %>%
       dplyr::mutate(upper_unit = time_vect_group) %>%
       dplyr::group_by(upper_unit) %>% # group by the day column
-      dplyr::summarise_at(vars(!!target_ts),mean, na.rm = FALSE)%>%
+      dplyr::summarise_at(dplyr::vars(!!target_ts),mean, na.rm = TRUE)%>%
       dplyr::mutate(date = as.POSIXct(date_by_unit$date, tz = "CET"))
     #--------------------- Sum --------------
     upper_summary_sum <- target_dat %>%
       dplyr::mutate(upper_unit = time_vect_group) %>%
       dplyr::group_by(upper_unit) %>% # group by the day column
-      dplyr::summarise_at(vars(!!target_ts),sum, na.rm = FALSE)%>%
+      dplyr::summarise_at(dplyr::vars(!!target_ts),sum, na.rm = TRUE)%>%
       dplyr::mutate(date = as.POSIXct(date_by_unit$date, tz = "CET"))
 
     #--------------------- maximum
     upper_summary_max <- target_dat %>%
       dplyr::mutate(upper_unit = time_vect_group) %>%
       dplyr::group_by(upper_unit) %>% # group by the day column
-      dplyr::summarise_at(vars(!!target_ts),max, na.rm = FALSE)%>%
+      dplyr::summarise_at(dplyr::vars(!!target_ts),max, na.rm = TRUE)%>%
       dplyr::mutate(date = as.POSIXct(date_by_unit$date, tz = "CET"))
 
     #--------------------- min
     upper_summary_min <- target_dat %>%
       dplyr::mutate(upper_unit = time_vect_group) %>%
       dplyr::group_by(upper_unit) %>% # group by the day column
-      dplyr::summarise_at(vars(!!target_ts),min, na.rm = FALSE)%>%
+      dplyr::summarise_at(dplyr::vars(!!target_ts),min, na.rm = TRUE)%>%
       dplyr::mutate(date = as.POSIXct(date_by_unit$date, tz = "CET"))
 
 
@@ -151,6 +151,7 @@ data_exloration_aqerru <- function(tisefka = NULL, sdukkel = NULL,
     time_unit = time_unit,
     base_unit = base_unit, target_ts = target_ts
   )
+
   #----------------------------------------------
   if (is.null(aggregation_metric)) {
     if (!is.null(sdukkel)) tisefka <- report_output_data$tisefka_ticeqfin
@@ -273,7 +274,9 @@ season_adjust_f <- function(tisefka = NULL, time_unit = NULL) {
   #-----------------------------
   output_season <- base::list()
   tisefka <- purrr::map_df(.x= tisefka,.f = interp_na_value, interp_mode = "spline")
-
+  for(k in colnames(tisefka)){
+    a<-interp_na_value(tisefka[,k],interp_mode = "spline")
+  }
   tuzyat_ukud <- time_based_seasonality(time_unit = time_unit)
   tuzyat_ukud <- rep(tuzyat_ukud,times = ncol(tisefka))
   #-------------------

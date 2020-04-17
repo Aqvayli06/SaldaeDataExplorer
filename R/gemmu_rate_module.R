@@ -5,9 +5,9 @@
 #' @param asurif differentiation lag
 #' @return numeric vector containing differentiated values
 basic_growth_rate <- function(x, asurif = 1) {
-  linear_Develop <- x - lag(x, asurif)
-  linear_growth_rate <- round((x - lag(x, asurif)) / lag(x, asurif) * 100, 2)
-  log_growth_rate <- round((log(x) - log(lag(x, asurif))) * 100, 2)
+  linear_Develop <- x - dplyr::lag(x, asurif)
+  linear_growth_rate <- round((x - dplyr::lag(x, asurif)) / dplyr::lag(x, asurif) * 100, 2)
+  log_growth_rate <- round((log(x) - log(dplyr::lag(x, asurif))) * 100, 2)
   gr <- dplyr::tbl_df(data.frame(linear_Develop, linear_growth_rate, log_growth_rate))
   return(gr)
 }
@@ -81,7 +81,26 @@ tezmer_i_gemmu <- function(x) {
   return(!any(na.omit(x) <= 0))
 }
 
-#' Growth Rate
+#' Saldae Growth Rate one variable
+#' @descriptioncalculate 3 different growth rates for one single variable
+#' @author Farid Azouaou
+#' @param tisefka_report Data exploration report
+#' @param gemmu_iswi target growth rate
+#' @param d_tirni exhaustive or grouped by
+#' @return  data frame containing growth rate
+Saldae_growth_rate_yiwen <- function(gemmu = NULL,tisefka = NULL , asurif  = NULL,target_variable = NULL){
+  gemmu <- apply(gemmu, 2, function(x) basic_growth_rate(x, asurif = asurif))
+  gemmu_yellan <- colnames(gemmu[[1]])
+  gemmu <- dplyr::tbl_df(do.call(cbind, gemmu))
+  gemmu <- purrr::map(.x =  gemmu_yellan,~rowSums(gemmu[, grepl(.x, colnames(gemmu))], na.rm = TRUE))%>%stats::setNames(gemmu_yellan)
+  gemmu <- dplyr::tbl_df(data.frame(gemmu,check.names = FALSE))
+  gemmu <- dplyr::bind_cols(tisefka, gemmu)
+  gemmu <- gemmu %>% dplyr::filter(!is.na(target_variable))
+  gemmu <- gemmu[, c("date", gemmu_yellan)]
+  return(gemmu)
+}
+
+#' Saldae Growth Rate
 #' @author Farid Azouaou
 #' @param tisefka_report Data exploration report
 #' @param gemmu_iswi target growth rate
@@ -89,46 +108,47 @@ tezmer_i_gemmu <- function(x) {
 #' @return  data frame containing growth rate
 #' @export
 
-rate_n_gemmu_f <- function(tisefka_report = NULL, gemmu_iswi = NULL, d_tirni = NULL) {
-  tisefka <- tisefka_report$tisefka
-  target_variable <- tisefka_report$target_ts
-  base_unit <- tisefka_report$time_unit
-  gemmu <- tezmer_i_gemmu(x = tisefka[, target_variable])
+Saldae_rate_n_gemmu_f <- function(tisefka = NULL,base_unit = NULL,target_ts= NULL ,gemmu_iswi = NULL, d_tirni = NULL) {
+  # tisefka <- tisefka_report$tisefka
+  #
+  # base_unit <- tisefka_report$time_unit
+  gemmu <- unlist(purrr::map(tisefka[, target_ts],  ~tezmer_i_gemmu(.x)))
+  target_ts <- target_ts[gemmu]
+
   akka_ukuden <- c("Seconds", "Minutes", "Hourly", "Daily", "Weekly", "Monthly", "Quarterly", "Yearly")
   names(akka_ukuden) <- c("seconds", "minutes", "hours", "days", "weeks", "months", "quarters", "years")
-  if (akka_ukuden[base_unit] != gemmu_iswi) {
-    tisefka_n_gemmu <- dplyr::tbl_df(data.frame(date = seq(from = min(tisefka$date), to = max(tisefka$date), by = base_unit)))
-    tisefka_n_gemmu <- tisefka_n_gemmu %>% dplyr::left_join(tisefka, by = "date")
-    gemmu_ig_zemren <- c("minute", "hour", "day", "wday", "mday", "month", "quarter", "mquarter", "year")
-    gemmu <- dplyr::tbl_df(timetk::tk_get_timeseries_signature(tisefka_n_gemmu$date))
-    gemmu <- gemmu %>% dplyr::mutate(mquarter = (month %% 4) + 1)
-    gemmu <- gemmu[, gemmu_ig_zemren]
-    gemmu <- gemmu %>% dplyr::select_if(~ length(unique(.)) > 1)
-    tisefka_n_gemmu <- dplyr::bind_cols(tisefka_n_gemmu, gemmu)
-    #------------------------
-    zuzer_s <- gemmu_detect_frequency(base_unit = base_unit, gemmu_iswi = gemmu_iswi)
-    gemmu <- tisefka_n_gemmu %>% tidyr::spread(!!zuzer_s, !!target_variable)
-    asurif <- length(unique(tisefka_n_gemmu %>% dplyr::pull(!!zuzer_s)))
-    gemmu <- gemmu %>% dplyr::select(c((ncol(gemmu) - asurif + 1):ncol(gemmu)))
-    gemmu <- apply(gemmu, 2, function(x) basic_growth_rate(x, asurif = asurif))
+  full_dates <- dplyr::tbl_df(data.frame(date = seq(from = min(tisefka$date), to = max(tisefka$date), by = base_unit)))
+  tisefka <- full_dates %>% dplyr::left_join(tisefka, by = "date")
 
-    gemmu_yellan <- colnames(gemmu[[1]])
-    gemmu <- dplyr::tbl_df(do.call(cbind, gemmu))
-    gemmu <- sapply(gemmu_yellan, function(x) rowSums(gemmu[, grepl(x, colnames(gemmu))], na.rm = TRUE))
-    gemmu <- dplyr::tbl_df(gemmu)
-    gemmu <- dplyr::bind_cols(tisefka_n_gemmu, gemmu)
-    gemmu <- gemmu %>% dplyr::filter(!is.na(target_variable))
-    gemmu <- gemmu[, c("date", gemmu_yellan)]
+
+  if (akka_ukuden[base_unit] != gemmu_iswi) {
+      gemmu_ig_zemren <- c("minute", "hour", "day", "wday", "mday", "month", "quarter", "mquarter", "year")
+      gemmu <- dplyr::tbl_df(timetk::tk_get_timeseries_signature(tisefka$date))
+      gemmu <- gemmu %>% dplyr::mutate(mquarter = (month %% 4) + 1)
+      gemmu <- gemmu[, gemmu_ig_zemren]
+      gemmu <- gemmu %>% dplyr::select_if(~ length(unique(.)) > 1)
+      tisefka <- purrr::map(.x = target_ts,~dplyr::bind_cols(tisefka[,c("date",.x)], gemmu))%>%
+                        stats::setNames(target_ts)
+      rm(gemmu)
+      #------------------------
+      zuzer_s <- gemmu_detect_frequency(base_unit = base_unit, gemmu_iswi = gemmu_iswi)
+
+      asurif <- length(unique(tisefka[[1]] %>% dplyr::pull(!!zuzer_s)))
+      gemmu   <- purrr::map(.x = target_ts, ~tisefka[[.x]]%>%tidyr::spread(!!zuzer_s, !!.x))
+
+      gemmu <- purrr::map(.x =gemmu ,~ .x%>% dplyr::select(c((ncol(.x) - asurif + 1):ncol(.x))))%>%
+        stats::setNames(target_ts)
+      gemmu <- purrr::map(.x = target_ts, ~Saldae_growth_rate_yiwen(gemmu = gemmu[[.x]],tisefka = tisefka[[.x]],target_variable = .x,asurif = asurif))%>%
+              stats::setNames(target_ts)
+
+
   } else {
-    tisefka_n_gemmu <- dplyr::tbl_df(data.frame(date = seq(from = min(tisefka$date), to = max(tisefka$date), by = base_unit)))
-    tisefka_n_gemmu <- tisefka_n_gemmu %>% dplyr::left_join(tisefka, by = "date")
-    # tisefka_n_gemmu <- tisefka%>%
+        # tisefka_n_gemmu <- tisefka%>%
     #   complete(date = seq(min(date), max(date), by=base_unit))
-    gemmu <- basic_growth_rate(tisefka_n_gemmu %>% dplyr::pull(!!target_variable))
-    gemmu_yellan <- colnames(gemmu)
-    gemmu <- dplyr::bind_cols(tisefka_n_gemmu, gemmu)
-    gemmu <- gemmu %>% dplyr::filter(!is.na(target_variable))
-    gemmu <- gemmu[, c("date", gemmu_yellan)]
+    gemmu <- purrr::map(.x = tisefka[,target_ts], ~basic_growth_rate(.x ))%>%stats::setNames(target_ts)
+    gemmu_yellan <- colnames(gemmu[[1]])
+    gemmu <- purrr::map(.x = target_ts, ~dplyr::bind_cols(tisefka[,c("date",.x)], gemmu[[.x]])%>%dplyr::filter(!is.na(.x)))
+    gemmu <- purrr::map(.x = gemmu,~.x[,c("date",gemmu_yellan)])%>%stats::setNames(target_ts)
   }
   return(gemmu)
 }

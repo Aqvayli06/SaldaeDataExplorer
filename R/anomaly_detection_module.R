@@ -63,11 +63,8 @@ anomaly_detection_yiwen <- function(tisefka = NULL,anomaly_mode = "auto"){
 #' @export
 
 anomaly_detection_nnegh <- function(tisefka = NULL, anomaly_mode = "auto", target_ts = NULL) {
-
   tisefka[,target_ts] <-purrr::map_df(tisefka[,target_ts,drop=T],~interp_na_value(ts_x = .x,interp_mode = "spline"))
-
   tisefka <- tisefka[,c("date",target_ts)]
-
   tisefka <- purrr::map(.x = target_ts, ~anomaly_detection_yiwen(tisefka = tisefka[,c("date",.x)],anomaly_mode = anomaly_mode))%>%
     stats::setNames(target_ts)
   return(tisefka)
