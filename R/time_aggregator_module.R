@@ -5,7 +5,7 @@
 #' @param n_new_dates detect only time step or generate new data using that time step
 #' @param include_start_date whether to includelast date value
 #' @return time stepoutput (hours, seconds, days , ... )
-
+#' @export
 detect_date_auto <- function(time_vect = NULL, n_new_dates = 1, include_start_date = FALSE) {
 
   time_vect <- tail(time_vect, 1000)
@@ -126,7 +126,7 @@ possible_units_for_summary <- function(time_vect = NULL) {
 #' @param basis_unit  basis time unit
 #' @param last_date ur zri-gh ara
 #' @return a scalar number ( 24 hours in one day)
-
+#' @export
 
 detect_number_basis_units_in_upper_unit <- function(upper_unit = NULL, basis_unit = NULL, last_date = NULL) {
   #-------------------

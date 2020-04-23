@@ -36,13 +36,14 @@ anomaly_detection_yiwen <- function(tisefka = NULL,anomaly_mode = "auto"){
 
   if (anomaly_mode == "anomalize"){
     tisefka_tazedgant <- tisefka%>%anomalize::time_decompose(!!target_variable) %>%
-      anomalize::anomalize(remainder)
+      anomalize::anomalize(remainder)%>%
+      anomalize::clean_anomalies()
     if ("Yes" %in% tisefka_tazedgant$anomaly) {
       Anomalies <- purrr::imap(.x = 1:nrow(tisefka_tazedgant), ~ base::ifelse(tisefka_tazedgant$anomaly[.x] == "Yes", tisefka_tazedgant$observed[.x], NA))
-      tisefka <- tisefka %>% dplyr::mutate(Anomalies = as.numeric(Anomalies))
+      tisefka <- tisefka %>% dplyr::mutate(Anomalies = as.numeric(Anomalies),Corrected = tisefka_tazedgant$observed_cleaned)
     }
     # Function to clean & repair anomalous data
-    # anomalize:clean_anomalies()
+    # anomalize::clean_anomalies()
   }
   if (anomaly_mode == "twitter") {
     anomaly_ts <- AnomalyDetection::AnomalyDetectionTs(x = tisefka[, c("date", target_ts)], max_anoms = 0.02, direction = "both", plot = FALSE)
