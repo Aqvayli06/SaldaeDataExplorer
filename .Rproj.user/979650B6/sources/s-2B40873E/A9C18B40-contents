@@ -23,7 +23,6 @@ Imports:
       dlookr,
       zoo,
       anomalize,
-      AnomalyDetection,
       purrr,
       imputeTS
 License: MIT

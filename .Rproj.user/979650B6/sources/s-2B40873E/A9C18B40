@@ -5,15 +5,15 @@
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "3775170528",
+    "hash" : "0",
     "id" : "A9C18B40",
-    "lastKnownWriteTime" : 1587048593,
+    "lastKnownWriteTime" : 1587819504,
     "last_content_update" : -2147483648,
     "path" : "~/Saldae_Analytics/SaldaePackages/SaldaeDataExplorer/DESCRIPTION",
     "project_path" : "DESCRIPTION",
     "properties" : {
-        "cursorPosition" : "27,14",
-        "scrollLine" : "0"
+        "cursorPosition" : "25,0",
+        "scrollLine" : "10"
     },
     "relative_order" : 3,
     "source_on_save" : false,

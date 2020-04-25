@@ -46,7 +46,7 @@ anomaly_detection_yiwen <- function(tisefka = NULL,anomaly_mode = "auto"){
     # anomalize::clean_anomalies()
   }
   if (anomaly_mode == "twitter") {
-    anomaly_ts <- AnomalyDetection::AnomalyDetectionTs(x = tisefka[, c("date", target_ts)], max_anoms = 0.02, direction = "both", plot = FALSE)
+    # anomaly_ts <- AnomalyDetection::AnomalyDetectionTs(x = tisefka[, c("date", target_ts)], max_anoms = 0.02, direction = "both", plot = FALSE)
     if (dim(anomaly_ts$anoms)[1] != 0) {
       anomaly_ts <- anomaly_ts$anoms
       anomaly_ts <- data.frame(date = as.POSIXct(anomaly_ts$timestamp, tz = "CET"), Anomalies = anomaly_ts$anoms)
