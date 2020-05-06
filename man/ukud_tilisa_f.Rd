@@ -4,7 +4,7 @@
 \alias{ukud_tilisa_f}
 \title{Saldae  Time interval}
 \usage{
-ukud_tilisa_f(tisefka = NULL)
+ukud_tilisa_f(tisefka = NULL, date_vector = NULL)
 }
 \arguments{
 \item{tisefka}{data frame with dates as row names}

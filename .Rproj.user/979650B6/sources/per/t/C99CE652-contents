@@ -73,12 +73,11 @@ IsDate <- function(mydate, SA_date_format) {
 #' @param tisefka raw data
 #' @param date_index variable to use as a date
 #' @return logical statement
+#' @export
 
-tisefka_spread_yella <- function(tisefka = NULL, date_index = NULL) {
-  if (is.null(tisefka)) {
-    return(NULL)
-  }
-  date_index <- which(date_index == colnames(tisefka))
+tisefka_spread_yella <- function(tisefka = NULL, date_variable = NULL, upper_bound = 60) {
+  if(IsDate(dplyr::pull(tisefka,date_variable)[1])==FALSE)return(NULL)
+  date_index <- which(date_variable == colnames(tisefka))
   if (date_index == 0)return(NULL)
   tisefka_diagnosis <- dlookr::diagnose(.data = tisefka)
   tisefka_diagnosis <- data.frame(tisefka_diagnosis, check.names = FALSE)
@@ -87,14 +86,16 @@ tisefka_spread_yella <- function(tisefka = NULL, date_index = NULL) {
     return(NULL)
   }
   tisefka_diagnosis <- tisefka_diagnosis[-date_index, ]
-  if (min(tisefka_diagnosis[, "unique_count"]) > 10) {
+  if (min(tisefka_diagnosis[, "unique_count"]) > upper_bound) {
     return(NULL)
   }
-  tisefka_diagnosis <- tisefka_diagnosis[tisefka_diagnosis[, "unique_count"] <= 10, ]
+  tisefka_diagnosis <- tisefka_diagnosis[tisefka_diagnosis[, "unique_count"] <= upper_bound, ]
   if (max(tisefka_diagnosis[, "unique_count"]) == 1) {
     return(NULL)
   }
-  return(tisefka_diagnosis[tisefka_diagnosis[, "unique_count"] <= 10, "variables"])
+  myspread_variable <- tisefka_diagnosis[tisefka_diagnosis[, "unique_count"] <= upper_bound, "variables"]
+  myspread_variable <- myspread_variable[myspread_variable != date_variable]
+  return(myspread_variable)
 }
 
 #' Saldae prepare data
@@ -121,15 +122,10 @@ sbed_tisefka <- function(tisefka = NULL, date_variable = NULL, SA_date_format = 
     return(NULL)
   }
   if (!is.null(spread_value) & !is.null(spread_key)) {
-    # print("duplicated data available")
-    # tisefka2<<-tisefka
-    # tisefka <- tisefka %>%tidyr::spread(key = spread_key,value = spread_value)
-    # tisefka3<<-tisefka
+    tisefka <- zuzer_tisefka(tisefka = tisefka , anwa = spread_value,f_anwa = spread_key)
   }
-
   tisefka <- tisefka %>% dplyr::distinct(date, .keep_all = TRUE)
   warning("There is high risk, that duplicated data are overwritten!!!!")
-  rownames(tisefka) <- tisefka[, "date"]
   return(tisefka)
 }
 
@@ -173,9 +169,9 @@ ukud_aciwen <- function(x = NULL) {
 #' @return time intervals
 #' @export
 
-ukud_tilisa_f <- function(tisefka = NULL) {
+ukud_tilisa_f <- function(tisefka = NULL,date_vector= NULL) {
   ukud_tilisa <- t(apply(tisefka, 2, function(x) ukud_aciwen(x)))
-  ukud_tilisa <- data.frame("Start Date" = rownames(tisefka)[ukud_tilisa[, 1]], "End Date" = rownames(tisefka)[ukud_tilisa[, 2]], check.names = FALSE)
-  rownames(ukud_tilisa) <- colnames(tisefka)
+  ukud_tilisa <- data.frame("Start Date" = date_vector[ukud_tilisa[, 1]], "End Date" = date_vector[ukud_tilisa[, 2]], check.names = FALSE)
+  # rownames(ukud_tilisa) <- colnames(tisefka)
   return(ukud_tilisa)
 }

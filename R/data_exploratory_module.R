@@ -548,13 +548,17 @@ sekned_tisefka_DT <- function(tisefka = NULL, gzem = 3) {
 #' @export
 
 Handson_exploration <- function(tisefka = NULL, tisefka_report = NULL, numeric_variables = NULL) {
+
+   date_vector<- tisefka$date
+
   tisefka <- tisefka[, numeric_variables, drop = F]
+
   tisefka_density <- apply(tisefka, 2, function(x) stats::density(na.omit(x))$y)
   relevant_variables <- c("variables", "outliers_cnt")
   DF <- tisefka_report$outliers[, relevant_variables]
-  DF <- cbind(DF, ukud_tilisa_f(tisefka = tisefka))
-  DF_stat <- data.frame(tisefka_report$beschreibung[, c("n", "na", "mean", "sd")])
-  DF <- cbind(DF, DF_stat)
+  DF <- cbind(DF, ukud_tilisa_f(tisefka = tisefka,date_vector = date_vector))
+  DF_stat <- tisefka_report$beschreibung[, c("n", "na", "mean", "sd")]
+  DF <- DF%>%dplyr::bind_cols(DF_stat)
 
   # DF <- DF[numeric_variables, ]
   DF$Chart <- sapply(
@@ -562,10 +566,9 @@ Handson_exploration <- function(tisefka = NULL, tisefka_report = NULL, numeric_v
     function(x) {
       if(!is.numeric(tisefka_density[, x]))return(NULL)
       jsonlite::toJSON(list(
-        values = tisefka[, x],
+        values = tisefka%>%dplyr::pull(!!x),
         options = list(type = "line",col="green")
-      ),
-      na="null")
+      ),na="null")
     }
   )
 
@@ -584,7 +587,7 @@ Handson_exploration <- function(tisefka = NULL, tisefka_report = NULL, numeric_v
     function(x) {
       if(!is.numeric(tisefka_density[, x]))return(NULL)
       jsonlite::toJSON(list(
-        values = tisefka[, x],
+        values = tisefka%>%dplyr::pull(!!x),
         options = list(type = "box")
       ),na="null")
     }

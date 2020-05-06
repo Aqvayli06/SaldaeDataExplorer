@@ -50,17 +50,19 @@ ukud_acu_asdukkel <- function(ukud_unit = NULL) {
 
 data_diagnosis_f <- function(tisefka = NULL, categoricals_ukud = NULL, ukud_unit = NULL) {
   output_data_quality <- list()
+
   output_data_quality[["diagnosis"]]    <- dlookr::diagnose(.data = tisefka)
   output_data_quality[["beschreibung"]] <- dlookr::describe(.data = tisefka)
   output_data_quality[["outliers"]]     <- dlookr::diagnose_outlier(.data = tisefka)
-  rownames(output_data_quality[["beschreibung"]]) <- rownames(output_data_quality[["outliers"]]) <-output_data_quality[["beschreibung"]]$variable
+
+  # rownames(output_data_quality[["beschreibung"]]) <- rownames(output_data_quality[["outliers"]]) <- output_data_quality[["beschreibung"]]$variable
+
   #----------------------------- afe-d ukuden yeddan akk d ukud_unit
   categoricals <- output_data_quality$diagnosis[output_data_quality$diagnosis$unique_count < 8 & output_data_quality$diagnosis$unique_count > 1, "variables"]
   output_data_quality[["categoricals"]] <- categoricals$variables
   #-----------------------------------------------------------------
   return(output_data_quality)
 }
-
 #------------------------------------------
 #' Saldae : data diagnosis display
 #' @author Farid Azouaou

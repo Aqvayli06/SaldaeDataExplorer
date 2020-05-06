@@ -5,15 +5,15 @@
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "2176288084",
+    "hash" : "1329790355",
     "id" : "160A57F",
-    "lastKnownWriteTime" : 1587038357,
-    "last_content_update" : -2147483648,
+    "lastKnownWriteTime" : 1588671880,
+    "last_content_update" : 1588671880,
     "path" : "~/Saldae_Analytics/SaldaePackages/SaldaeDataExplorer/R/data_quality_diagnosis.R",
     "project_path" : "R/data_quality_diagnosis.R",
     "properties" : {
-        "cursorPosition" : "55,137",
-        "scrollLine" : "0"
+        "cursorPosition" : "74,32",
+        "scrollLine" : "63"
     },
     "relative_order" : 2,
     "source_on_save" : false,

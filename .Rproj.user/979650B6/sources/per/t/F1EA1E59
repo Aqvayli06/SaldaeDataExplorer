@@ -1,19 +1,19 @@
 {
     "collab_server" : "",
     "contents" : "",
-    "created" : 1586897388300.000,
+    "created" : 1588673086594.000,
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "451199236",
-    "id" : "7794A2EA",
-    "lastKnownWriteTime" : 1587126978,
+    "hash" : "1356858040",
+    "id" : "F1EA1E59",
+    "lastKnownWriteTime" : 1588674274,
     "last_content_update" : -2147483648,
     "path" : "~/Saldae_Analytics/SaldaePackages/SaldaeDataExplorer/R/data_exploratory_module.R",
     "project_path" : "R/data_exploratory_module.R",
     "properties" : {
-        "cursorPosition" : "73,7",
-        "scrollLine" : "0"
+        "cursorPosition" : "551,1",
+        "scrollLine" : "548"
     },
     "relative_order" : 4,
     "source_on_save" : false,

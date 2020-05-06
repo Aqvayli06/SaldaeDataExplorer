@@ -4,7 +4,7 @@
         "filePatterns" : [
         ],
         "path" : "~/Saldae_Analytics/SaldaePackages/SaldaeDataExplorer/R",
-        "query" : "AnomalyDetection",
+        "query" : "handson",
         "regex" : false
     }
 }

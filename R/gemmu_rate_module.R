@@ -82,7 +82,7 @@ tezmer_i_gemmu <- function(x) {
 }
 
 #' Saldae Growth Rate one variable
-#' @descriptioncalculate 3 different growth rates for one single variable
+#' @description calculate 3 different growth rates for one single variable
 #' @author Farid Azouaou
 #' @param tisefka_report Data exploration report
 #' @param gemmu_iswi target growth rate

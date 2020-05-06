@@ -4,7 +4,8 @@
 \alias{tisefka_spread_yella}
 \title{Saldae duplicated dates in raw data}
 \usage{
-tisefka_spread_yella(tisefka = NULL, date_index = NULL)
+tisefka_spread_yella(tisefka = NULL, date_variable = NULL,
+  upper_bound = 60)
 }
 \arguments{
 \item{tisefka}{raw data}

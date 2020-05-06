@@ -18,7 +18,7 @@ Saldae_growth_rate_yiwen(gemmu = NULL, tisefka = NULL, asurif = NULL,
 data frame containing growth rate
 }
 \description{
-Saldae Growth Rate one variable
+calculate 3 different growth rates for one single variable
 }
 \author{
 Farid Azouaou
