@@ -5,8 +5,8 @@
 \title{Saldae prepare data}
 \usage{
 sbed_tisefka(tisefka = NULL, date_variable = NULL,
-  SA_date_format = "YYYY-MM-DD", spread_value = NULL,
-  spread_key = NULL)
+  SA_date_format = "YYYY-MM-DD", aggregation_metric = NULL,
+  spread_value = NULL, spread_key = NULL)
 }
 \arguments{
 \item{tisefka}{raw data(uploaded from inputfile)}
@@ -14,6 +14,8 @@ sbed_tisefka(tisefka = NULL, date_variable = NULL,
 \item{date_variable}{variable to use as date}
 
 \item{SA_date_format}{date format}
+
+\item{aggregation_metric}{used metric to aggregate Sum, Average, Maximum,...}
 
 \item{spread_value}{value to spread data}
 

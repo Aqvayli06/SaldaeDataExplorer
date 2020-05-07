@@ -36,7 +36,8 @@ ukud_format_complete <- function(ukud_format = NULL,ukud_vector = NULL){
 #' @export
 
 zuzer_tisefka <- function(tisefka = NULL,anwa= NULL,f_anwa = NULL){
-  tisefka <- tisefka%>%tidyr::pivot_wider(names_from = f_anwa,
+  tisefka <- tisefka%>%tidyr::pivot_wider(id_cols= date,
+                                          names_from = f_anwa,
                                           values_from = anwa,
                                           values_fill = list(seen = NA))
   return(tisefka)

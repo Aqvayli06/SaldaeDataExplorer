@@ -57,7 +57,7 @@ ghred_tisefka_aqerru <- function(input_file = NULL, tala = NULL, tawriqt = NULL)
 #' @param mydate a character containing date information
 #' @param SA_date_format date format (YYYY/mm/dd , YY-dd-mm)
 #' @return idk
-
+#' @export
 
 IsDate <- function(mydate, SA_date_format) {
   tryCatch(!is.na(base::as.POSIXct(mydate, "", format = SA_date_format)),
@@ -97,6 +97,26 @@ tisefka_spread_yella <- function(tisefka = NULL, date_variable = NULL, upper_bou
   myspread_variable <- myspread_variable[myspread_variable != date_variable]
   return(myspread_variable)
 }
+#' Saldae aggregation function
+#' @author Farid Azouaou
+#' @param aggregation_metric Maximum, Sum, Average, Minimum , Median
+aggregation_fun<- function(aggregation_metric= NULL){
+  if(aggregation_metric=="Sum"){
+    return(sum)
+  }
+  if(aggregation_metric=="Average"){
+    return(mean)
+  }
+  if(aggregation_metric=="Maximum"){
+    return(max)
+  }
+  if(aggregation_metric=="Minimum"){
+    return(min)
+  }
+  if(aggregation_metric=="Median"){
+    return(median)
+  }
+}
 
 #' Saldae prepare data
 #' @description Prepare raw data using date_variable as row names
@@ -106,10 +126,11 @@ tisefka_spread_yella <- function(tisefka = NULL, date_variable = NULL, upper_bou
 #' @param SA_date_format date format
 #' @param spread_value value to spread data
 #' @param spread_key   group category to use to spread data
+#' @param aggregation_metric used metric to aggregate Sum, Average, Maximum,...
 #' @return raw data ready to explore and to analyze
 #' @export
 
-sbed_tisefka <- function(tisefka = NULL, date_variable = NULL, SA_date_format = "YYYY-MM-DD", spread_value = NULL, spread_key = NULL) {
+sbed_tisefka <- function(tisefka = NULL, date_variable = NULL, SA_date_format = "YYYY-MM-DD",aggregation_metric=NULL, spread_value = NULL, spread_key = NULL) {
   SA_date_format <- paste(SA_date_format, "H:M:S")
   if (is.null(tisefka)) {
     return(NULL)
@@ -120,6 +141,11 @@ sbed_tisefka <- function(tisefka = NULL, date_variable = NULL, SA_date_format = 
     colnames(tisefka)[DATE_index] <- "date"
   } else {
     return(NULL)
+  }
+  if(!is.null(aggregation_metric)){
+    my_aggregation_fun<-aggregation_fun(aggregation_metric = aggregation_metric)
+    tisefka <- tisefka%>%dplyr::group_by(date)%>%
+      dplyr::summarise_if(is.numeric, my_aggregation_fun, na.rm = TRUE)
   }
   if (!is.null(spread_value) & !is.null(spread_key)) {
     tisefka <- zuzer_tisefka(tisefka = tisefka , anwa = spread_value,f_anwa = spread_key)
