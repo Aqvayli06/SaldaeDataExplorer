@@ -42,10 +42,10 @@ ghred_tisefka_excel <- function(input_file = NULL, tawriqt = NULL) {
 #' @export
 
 ghred_tisefka_aqerru <- function(input_file = NULL, tala = NULL, tawriqt = NULL) {
-  if (tala == "CSV") {
+  if (tala == "csv") {
     tisefka <- ghred_tisefka_csv(input_file = input_file)
   }
-  if (tala == "EXCEL") {
+  if (tala == "xlsx") {
     tisefka <- ghred_tisefka_excel(input_file = input_file, tawriqt = tawriqt)
   }
   return(tisefka)
@@ -60,7 +60,8 @@ ghred_tisefka_aqerru <- function(input_file = NULL, tala = NULL, tawriqt = NULL)
 #' @export
 
 IsDate <- function(mydate, SA_date_format) {
-  tryCatch(!is.na(base::as.POSIXct(mydate, "", format = SA_date_format)),
+  # lubridate::fast_strptime(mydate, format = SA_date_format)
+  tryCatch(!is.na(base::as.POSIXct(mydate, format = SA_date_format)),
     error = function(err) {
       FALSE
     }
@@ -165,6 +166,7 @@ SA_date_format_yellan <- function(ukud = NULL) {
     "YYYY-MM-DD", "YYYY/MM/DD", "YYYY.MM.DD", "YYYYMMDD",
     "DD-MM-YYYY", "DD/MM/YYYY", "DD.MM.YYYY", "MM-DD-YYYY"
   )
+  date_format_R <- c("%Y-%m-%d","%Y/%m/%d","%Y.%m.%d","%Y%m%d","%Y-%m-%d","%Y-%m-%d")
   return(date_format_yellan)
 }
 
