@@ -1,22 +1,22 @@
 {
     "collab_server" : "",
     "contents" : "",
-    "created" : 1589302914336.000,
+    "created" : 1589974453652.000,
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "1329823033",
-    "id" : "518E9CBA",
-    "lastKnownWriteTime" : 1589303821,
+    "hash" : "246631079",
+    "id" : "B4D97147",
+    "lastKnownWriteTime" : 1589981965,
     "last_content_update" : -2147483648,
     "path" : "~/Saldae_Analytics/SaldaePackages/SaldaeDataExplorer/R/time_aggregator_module.R",
     "project_path" : "R/time_aggregator_module.R",
     "properties" : {
-        "cursorPosition" : "16,8",
-        "scrollLine" : "0"
+        "cursorPosition" : "98,16",
+        "scrollLine" : "88"
     },
-    "relative_order" : 5,
-    "source_on_save" : false,
+    "relative_order" : 4,
+    "source_on_save" : true,
     "source_window" : "",
     "type" : "r_source"
 }

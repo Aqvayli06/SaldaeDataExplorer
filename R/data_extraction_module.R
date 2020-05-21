@@ -48,6 +48,8 @@ ghred_tisefka_aqerru <- function(input_file = NULL, tala = NULL, tawriqt = NULL)
   if (tala == "xlsx") {
     tisefka <- ghred_tisefka_excel(input_file = input_file, tawriqt = tawriqt)
   }
+  tisefka <- tisefka%>%janitor::remove_empty(which = c("cols"))%>%
+              janitor::remove_constant()
   return(tisefka)
 }
 
@@ -60,8 +62,8 @@ ghred_tisefka_aqerru <- function(input_file = NULL, tala = NULL, tawriqt = NULL)
 #' @export
 
 IsDate <- function(mydate, SA_date_format) {
-  # lubridate::fast_strptime(mydate, format = SA_date_format)
-  tryCatch(!is.na(base::as.POSIXct(mydate, format = SA_date_format)),
+  if(class(mydate[1])=="Date")return(TRUE)
+  tryCatch(!is.na(base::as.POSIXct(mydate,format = SA_date_format)),
     error = function(err) {
       FALSE
     }
@@ -76,8 +78,8 @@ IsDate <- function(mydate, SA_date_format) {
 #' @return logical statement
 #' @export
 
-tisefka_spread_yella <- function(tisefka = NULL, date_variable = NULL, upper_bound = 60) {
-  if(IsDate(dplyr::pull(tisefka,date_variable)[1])==FALSE)return(NULL)
+tisefka_spread_yella <- function(tisefka = NULL, date_variable = NULL, SA_date_format=NULL,upper_bound = 60) {
+  if(IsDate(head(dplyr::pull(tisefka,date_variable)),SA_date_format =SA_date_format )==FALSE)return(NULL)
   date_index <- which(date_variable == colnames(tisefka))
   if (date_index == 0)return(NULL)
   tisefka_diagnosis <- dlookr::diagnose(.data = tisefka)
@@ -132,27 +134,34 @@ aggregation_fun<- function(aggregation_metric= NULL){
 #' @export
 
 sbed_tisefka <- function(tisefka = NULL, date_variable = NULL, SA_date_format = "YYYY-MM-DD",aggregation_metric=NULL, spread_value = NULL, spread_key = NULL) {
-  SA_date_format <- paste(SA_date_format, "H:M:S")
+  # SA_date_format <- paste(SA_date_format, "H:M:S")
+  SA_date_format <- SA_date_format_convert(SA_date_format)
+
   if (is.null(tisefka)) {
     return(NULL)
   }
   DATE_index <- which(date_variable == colnames(tisefka))
+
   Date_telha <- IsDate(mydate = head(tisefka[, DATE_index]), SA_date_format = SA_date_format)
+
   if (!FALSE %in% Date_telha) {
     colnames(tisefka)[DATE_index] <- "date"
+    if(class(tisefka$date)[1]!="Date"){
+      tisefka <- tisefka%>%mutate(date = as.POSIXct(date,format = SA_date_format))
+    }
   } else {
     return(NULL)
   }
   if(!is.null(aggregation_metric)){
-    my_aggregation_fun<-aggregation_fun(aggregation_metric = aggregation_metric)
+    my_aggregation_fun <- aggregation_fun(aggregation_metric = aggregation_metric)
     tisefka <- tisefka%>%dplyr::group_by(date)%>%
       dplyr::summarise_if(is.numeric, my_aggregation_fun, na.rm = TRUE)
   }
   if (!is.null(spread_value) & !is.null(spread_key)) {
     tisefka <- zuzer_tisefka(tisefka = tisefka , anwa = spread_value,f_anwa = spread_key)
   }
-  tisefka <- tisefka %>% dplyr::distinct(date, .keep_all = TRUE)
-  warning("There is high risk, that duplicated data are overwritten!!!!")
+  tisefka <- tisefka %>% dplyr::distinct(date, .keep_all = TRUE)%>%
+            dplyr::arrange(date)
   return(tisefka)
 }
 
@@ -163,13 +172,25 @@ sbed_tisefka <- function(tisefka = NULL, date_variable = NULL, SA_date_format = 
 #' @export
 SA_date_format_yellan <- function(ukud = NULL) {
   date_format_yellan <- c(
-    "YYYY-MM-DD", "YYYY/MM/DD", "YYYY.MM.DD", "YYYYMMDD",
-    "DD-MM-YYYY", "DD/MM/YYYY", "DD.MM.YYYY", "MM-DD-YYYY"
+    "YYYY-MM-DD", "YYYY/MM/DD", "YYYY.MM.DD", "YYYYMMDD","MM-DD-YYYY","MM/DD/YYYY",
+    "DD-MM-YYYY", "DD/MM/YYYY", "DD.MM.YYYY","YYYY-MON-DD","YYYY/MONTH/DD"
   )
-  date_format_R <- c("%Y-%m-%d","%Y/%m/%d","%Y.%m.%d","%Y%m%d","%Y-%m-%d","%Y-%m-%d")
   return(date_format_yellan)
 }
+#' Saldae convert into R-based date format
+#' @param my_date_format
+#' @return R-based date format
 
+SA_date_format_convert <- function(my_date_format = NULL){
+  date_format_yellan <- gsub("YYYY","%Y",my_date_format)
+  date_format_yellan <- gsub("YY","%y",date_format_yellan)
+  date_format_yellan <- gsub("MM","%m",date_format_yellan)
+  date_format_yellan <- gsub("DD","%d",date_format_yellan)
+  date_format_yellan <- gsub("DD","%d",date_format_yellan)
+  date_format_yellan <- gsub("MON","%b",date_format_yellan)
+  date_format_yellan <- gsub("MONTH","%B",date_format_yellan)
+return(date_format_yellan)
+}
 #' Saldae arrange  data
 #' @author Farid Azouaou
 #' @param tifeka raw data

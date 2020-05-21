@@ -5,15 +5,15 @@
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "4090095384",
+    "hash" : "1932204044",
     "id" : "C99CE652",
-    "lastKnownWriteTime" : 1589483602,
+    "lastKnownWriteTime" : 1589980323,
     "last_content_update" : -2147483648,
     "path" : "~/Saldae_Analytics/SaldaePackages/SaldaeDataExplorer/R/data_extraction_module.R",
     "project_path" : "R/data_extraction_module.R",
     "properties" : {
-        "cursorPosition" : "63,0",
-        "scrollLine" : "54"
+        "cursorPosition" : "163,31",
+        "scrollLine" : "0"
     },
     "relative_order" : 1,
     "source_on_save" : false,

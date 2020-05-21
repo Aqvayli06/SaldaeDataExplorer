@@ -7,19 +7,20 @@
 #' @return time stepoutput (hours, seconds, days , ... )
 #' @export
 detect_date_auto <- function(time_vect = NULL, n_new_dates = 1, include_start_date = FALSE) {
-
   time_vect <- tail(time_vect, 1000)
   time_jump <- round(abs(diff(as.POSIXct(time_vect))), 0)
   time_unit <- attributes(time_jump)$units
   # .
-  if (365 %in% unique(time_jump) & time_unit == "days") {
+  time_jump <- head(plyr::count(time_jump)%>%dplyr::arrange(desc(freq)),2)$x
+
+  if (365 %in% time_jump & time_unit == "days") {
     time_unit <- "years"
     if (is.null(n_new_dates)) {
       return(time_unit)
     }
     new_dates <- seq.Date(from = as.Date(tail(time_vect, 1)), length.out = n_new_dates + 1, by = "years")
   }
-  if ((TRUE %in% sapply(unique(time_jump), function(x) x %in% c(31, 30, 29, 28))) & time_unit == "days") {
+  if ((TRUE %in% sapply(time_jump, function(x) x %in% c(31, 30))) & time_unit == "days") {
     # ..........
     time_unit <- "months"
     if (is.null(n_new_dates)) {
@@ -28,7 +29,7 @@ detect_date_auto <- function(time_vect = NULL, n_new_dates = 1, include_start_da
     new_dates <- seq.Date(from = as.Date(tail(time_vect, 1)), length.out = n_new_dates + 1, by = "months")
     # ..........
   }
-  if ((TRUE %in% sapply(unique(time_jump), function(x) x %in% c(7))) & time_unit == "days") {
+  if ((TRUE %in% sapply(time_jump, function(x) x %in% c(7))) & time_unit == "days") {
     # ..........
     time_unit <- "weeks"
     if (is.null(n_new_dates)) {
@@ -37,7 +38,7 @@ detect_date_auto <- function(time_vect = NULL, n_new_dates = 1, include_start_da
     new_dates <- seq.Date(from = as.Date(tail(time_vect, 1)), length.out = n_new_dates + 1, by = "7 days")
     # ..........
   }
-  if (TRUE %in% (unique(time_jump) == 1) & time_unit == "days" || TRUE %in% (unique(time_jump) == 24) & time_unit == "hours") {
+  if (TRUE %in% (time_jump == 1) & time_unit == "days" || TRUE %in% (time_jump == 24) & time_unit == "hours") {
     # ..........
     time_unit <- "days"
     if (is.null(n_new_dates)) {
@@ -46,7 +47,7 @@ detect_date_auto <- function(time_vect = NULL, n_new_dates = 1, include_start_da
     new_dates <- seq.Date(from = as.Date(tail(time_vect, 1)), length.out = n_new_dates + 1, by = "days")
     # ..........
   }
-  if (TRUE %in% (unique(time_jump) == 90) & time_unit == "days") {
+  if (TRUE %in% (time_jump == 90) & time_unit == "days") {
     # ..........
     time_unit <- "quarter"
     if (is.null(n_new_dates)) {
@@ -55,7 +56,7 @@ detect_date_auto <- function(time_vect = NULL, n_new_dates = 1, include_start_da
     new_dates <- seq.Date(from = as.Date(tail(time_vect, 1)), length.out = n_new_dates + 1, by = "quarter")
     # ..........
   }
-  if (TRUE %in% (unique(time_jump) == 60) & time_unit == "mins" | TRUE %in% (unique(time_jump) == 1) & time_unit == "hours") {
+  if (TRUE %in% (time_jump == 60) & time_unit == "mins" | TRUE %in% (time_jump == 1) & time_unit == "hours") {
     # ..........
     time_unit <- "hours"
     if (is.null(n_new_dates)) {
@@ -64,7 +65,7 @@ detect_date_auto <- function(time_vect = NULL, n_new_dates = 1, include_start_da
     new_dates <- seq(from = as.POSIXct(tail(time_vect, 1), tz = "CET"), length.out = n_new_dates + 1, by = "hours")
     # ..........
   }
-  if (TRUE %in% (unique(time_jump) == 30) & time_unit == "mins") {
+  if (TRUE %in% (time_jump== 30) & time_unit == "mins") {
     # ..........
     time_unit <- "1/2 hours"
     if (is.null(n_new_dates)) {
@@ -74,7 +75,7 @@ detect_date_auto <- function(time_vect = NULL, n_new_dates = 1, include_start_da
     # ..........
   }
 
-  if (TRUE %in% (unique(time_jump) == 15) & time_unit == "mins") {
+  if (TRUE %in% (time_jump == 15) & time_unit == "mins") {
     # ..........
     time_unit <- "1/4 hours"
     if (is.null(n_new_dates)) {
@@ -83,7 +84,7 @@ detect_date_auto <- function(time_vect = NULL, n_new_dates = 1, include_start_da
     new_dates <- seq(from = as.POSIXct(tail(time_vect, 1), tz = "CET"), length.out = n_new_dates + 1, by = "15 minutes")
     # ..........
   }
-  if (TRUE %in% (unique(time_jump) == 60) & time_unit == "secs" | TRUE %in% (unique(time_jump) == 1) & time_unit == "mins") {
+  if (TRUE %in% (time_jump == 60) & time_unit == "secs" | TRUE %in% (time_jump == 1) & time_unit == "mins") {
     # ..........
     time_unit <- "minutes"
     if (is.null(n_new_dates)) {
@@ -94,7 +95,7 @@ detect_date_auto <- function(time_vect = NULL, n_new_dates = 1, include_start_da
     stop_date <- start_date + period
     new_dates <- seq(start_date, stop_date, length.out = (n_new_dates + 1))
   }
-  if (TRUE %in% (unique(time_jump) == 1) & time_unit == "secs") {
+  if (TRUE %in% (time_jump == 1) & time_unit == "secs") {
     # ..........
     time_unit <- "seconds"
     if (is.null(n_new_dates)) {
