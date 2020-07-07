@@ -3,8 +3,9 @@
         "caseSensitive" : false,
         "filePatterns" : [
         ],
-        "path" : "~/Saldae_Analytics/SaldaePackages/SaldaeDataExplorer/R",
-        "query" : "isDate",
+        "path" : "/R",
+        "projectRelative" : true,
+        "query" : "economics",
         "regex" : false
     }
 }

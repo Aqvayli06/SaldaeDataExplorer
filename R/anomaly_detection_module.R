@@ -35,13 +35,17 @@ anomaly_detection_yiwen <- function(tisefka = NULL,anomaly_mode = "auto"){
   target_variable <- colnames(tisefka)[colnames(tisefka)!="date"]
 
   if (anomaly_mode == "anomalize"){
-    tisefka_tazedgant <- tisefka%>%anomalize::time_decompose(!!target_variable) %>%
+    tisefka <- tisefka%>%anomalize::time_decompose(!!target_variable) %>%
       anomalize::anomalize(remainder)%>%
       anomalize::clean_anomalies()
-    if ("Yes" %in% tisefka_tazedgant$anomaly) {
-      Anomalies <- purrr::imap(.x = 1:nrow(tisefka_tazedgant), ~ base::ifelse(tisefka_tazedgant$anomaly[.x] == "Yes", tisefka_tazedgant$observed[.x], NA))
-      tisefka <- tisefka %>% dplyr::mutate(Anomalies = as.numeric(Anomalies),Corrected = tisefka_tazedgant$observed_cleaned)
-    }
+    Anomalies <- purrr::imap(.x = 1:nrow(tisefka), ~ base::ifelse(tisefka$anomaly[.x] == "Yes", tisefka$observed[.x], NA))
+
+    tisefka<- tisefka%>%dplyr::mutate(Anomalies = as.numeric(Anomalies),upper_bound = trend+season+remainder_l2,lower_bound = trend+season+remainder_l1)%>%
+      dplyr::select(date,observed,anomaly,Anomalies,observed_cleaned,upper_bound,lower_bound)
+
+    # # if ("Yes" %in% tisefka_tazedgant$anomaly) {
+    #   tisefka <- tisefka %>% dplyr::mutate(Anomalies = as.numeric(Anomalies),Corrected = tisefka_tazedgant$observed_cleaned)
+    # # }
     # Function to clean & repair anomalous data
     # anomalize::clean_anomalies()
   }
