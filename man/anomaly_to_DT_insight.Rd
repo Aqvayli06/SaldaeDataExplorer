@@ -2,18 +2,18 @@
 % Please edit documentation in R/anomaly_detection_pool.R
 \name{anomaly_to_DT_insight}
 \alias{anomaly_to_DT_insight}
-\title{Anomaly Detection Pool (View)}
+\title{SA anomaly gloal viewer (DT)}
 \usage{
 anomaly_to_DT_insight(anomalies_set = NULL)
 }
 \arguments{
-\item{anomalies_set}{a list of dataframes containing anomaly detection results}
+\item{anomalies_set}{a list of anoamly detection data}
 }
 \value{
-a DT table
+DT datatable object
 }
 \description{
-Anomaly Detection Pool (View)
+SA anomaly gloal viewer (DT)
 }
 \author{
 Farid Azouaou

@@ -2,6 +2,7 @@
 
 export(Handson_exploration)
 export(IsDate)
+export(SA_anomaly_charter)
 export(SA_date_format_yellan)
 export(Saldae_rate_n_gemmu_f)
 export(annayen_n_tumura_f)

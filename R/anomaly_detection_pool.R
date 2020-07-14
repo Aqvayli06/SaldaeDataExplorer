@@ -1,4 +1,9 @@
-
+#' SA anomaly gloal viewer (DT)
+#' @description
+#' @author Farid Azouaou
+#' @param anomalies_set a list of anoamly detection data
+#' @return DT datatable object
+#' @export
 anomaly_to_DT_insight <- function(anomalies_set = NULL){
   my_date <- anomalies_set[[1]][,"date"]
   target_variables <- names(anomalies_set)
@@ -23,6 +28,13 @@ anomaly_to_DT_insight <- function(anomalies_set = NULL){
       backgroundColor = DT::styleInterval(c(-0.01, 0.01), c('orange', 'lightgreen', 'brown'))    )
   return(anomaly_DT)
 }
+#' SA anomaly detection view
+#' @description
+#' @author Farid Azouaou
+#' @param anomaly_tisefka single variable anomaly data
+#' @param targeg_variable the name of the variable in question
+#' @return a dygraph object
+#' @export
 SA_anomaly_charter <- function(anomaly_tisefka = NULL,target_variable = NULL){
   anomaly_tisefka<-anomaly_tisefka[c("date","lower_bound", "observed", "upper_bound")]
   rownames(anomaly_tisefka)<-anomaly_tisefka$date
@@ -31,12 +43,12 @@ SA_anomaly_charter <- function(anomaly_tisefka = NULL,target_variable = NULL){
     dygraphs::dySeries(c("lower_bound", "observed", "upper_bound"), label = target_variable)
 }
 
-
-library("dplyr")
-library("ggplot2")
-target_variables <- colnames(economics)[-1]
-anomalies_set <-SaldaeDataExplorer::anomaly_detection_nnegh(tisefka = economics,target_ts = target_variables)
-
-anomalies_charts <- names(anomalies_set)%>%purrr::map(~SA_anomaly_charter(anomaly_tisefka = anomalies_set[[.x]],target_variable = .x))%>%
-  stats::setNames(names(anomalies_set))
-anomalies_DT <- anomaly_to_DT_insight(anomalies_set = anomalies_set)
+#
+# library("dplyr")
+# library("ggplot2")
+# target_variables <- colnames(economics)[-1]
+# anomalies_set <-SaldaeDataExplorer::anomaly_detection_nnegh(tisefka = economics,target_ts = target_variables)
+#
+# anomalies_charts <- names(anomalies_set)%>%purrr::map(~SA_anomaly_charter(anomaly_tisefka = anomalies_set[[.x]],target_variable = .x))%>%
+#   stats::setNames(names(anomalies_set))
+# anomalies_DT <- anomaly_to_DT_insight(anomalies_set = anomalies_set)
