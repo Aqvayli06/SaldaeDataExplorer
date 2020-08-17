@@ -164,19 +164,19 @@ detect_number_basis_units_in_upper_unit <- function(upper_unit = NULL, basis_uni
     return(52)
   }
   if (upper_unit == "years" & basis_unit == "days") {
-    return(as.numeric(as.Date(as.yearmon(year(last_date)) + 1) - as.Date(as.yearmon(year(last_date)))))
+    return(as.numeric(as.Date(zoo::as.yearmon(lubridate::year(last_date)) + 1) - as.Date(zoo::as.yearmon(lubridate::year(last_date)))))
   }
   if (upper_unit == "quarters" & basis_unit == "months") {
     return(3)
   }
   if (upper_unit == "quarters" & basis_unit == "weeks") {
-    last_date <- as.Date(paste(year(last_date), month(last_date), lubridate::days_in_month(last_date), sep = "-"))
+    last_date <- as.Date(paste(lubridate::year(last_date), month(last_date), lubridate::days_in_month(last_date), sep = "-"))
     wk <- seq.Date(from = as.Date(last_date), length.out = 93, by = "-7 days")
     stop("ur tefriw ara")
     return(length(which(lubridate::quarter(wk) == lubridate::quarter(last_date))))
   }
   if (upper_unit == "quarters" & basis_unit == "days") {
-    agguren_deg_useggas <- seq.Date(from = as.Date(paste0(year(last_date), "-01-01")), length.out = 12, by = "months")
+    agguren_deg_useggas <- seq.Date(from = as.Date(paste0(lubridate::year(last_date), "-01-01")), length.out = 12, by = "months")
     ussan_deg_aggur <- days_in_month(agguren_deg_useggas)
     return(sum(ussan_deg_aggur[which(lubridate::quarter(agguren_deg_useggas) == lubridate::quarter(last_date))]))
   }

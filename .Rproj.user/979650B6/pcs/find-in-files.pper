@@ -5,7 +5,7 @@
         ],
         "path" : "/R",
         "projectRelative" : true,
-        "query" : "economics",
+        "query" : "year(",
         "regex" : false
     }
 }
