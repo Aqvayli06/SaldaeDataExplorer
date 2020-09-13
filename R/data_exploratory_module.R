@@ -99,12 +99,18 @@ data_aggregation_f <- function(tisefka = NULL, time_unit = NULL, base_unit = NUL
       dplyr::summarise_at(dplyr::vars(!!target_ts),min, na.rm = TRUE)%>%
       dplyr::mutate(date = as.POSIXct(date_by_unit$date, tz = "CET"))
 
+    upper_summary_median <- target_dat %>%
+      dplyr::mutate(upper_unit = time_vect_group) %>%
+      dplyr::group_by(upper_unit) %>% # group by the day column
+      dplyr::summarise_at(dplyr::vars(!!target_ts),median, na.rm = TRUE)%>%
+      dplyr::mutate(date = as.POSIXct(date_by_unit$date, tz = "CET"))
 
 
     report_output[["ts_aggregated_by_sum"]] <- upper_summary_sum
     report_output[["ts_aggregated_by_average"]] <- upper_summary_mean
     report_output[["ts_aggregated_by_max"]] <- upper_summary_max
     report_output[["ts_aggregated_by_min"]] <- upper_summary_min
+    report_output[["ts_aggregated_by_median"]] <- upper_summary_median
   } else {
     # tisefka[, "date"] <- as.POSIXct(rownames(tisefka))
     if (!is.null(sdukkel)) {
@@ -409,7 +415,7 @@ sekned_tisefka_aggregator <- function(tisefka = NULL,time_unit = NULL ,aggregati
       )
       p <- plotly::layout(p, y_axis = y_ax)
     }
-    p <- plotly::layout(p, legend = list(orientation = "h", x = 0.35, y = 100))
+    p <- plotly::layout(p, legend = list(orientation = "h", x = 0.35, y = 100))%>%plotly::config(displaylogo = F)
     return(p)
   }
   if (graph_type == "density") {

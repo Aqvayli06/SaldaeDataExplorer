@@ -4,9 +4,14 @@
 \alias{sekned_gemmu_f}
 \title{Display Growth rate results in chart.}
 \usage{
-sekned_gemmu_f(gemu_tisefka = NULL)
+sekned_gemmu_f(gemmu_tisefka = NULL,
+  target_variable = "linear_growth_rate", plot_type = "bar")
 }
 \arguments{
+\item{target_variable}{growth rate type linear_Develop, linear_growth_rate, log_growth_rate}
+
+\item{plot_type}{whether it's a linear or bar chart}
+
 \item{gemu_tisefka}{data frame containing growth rate}
 }
 \value{

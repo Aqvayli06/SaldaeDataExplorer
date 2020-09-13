@@ -23,6 +23,12 @@ gemmu_detect_frequency <- function(base_unit = NULL, gemmu_iswi = NULL) {
   if (base_unit == "minutes" & gemmu_iswi == "Hourly") {
     return("minute")
   }
+  if (base_unit == "1/4 hours" & gemmu_iswi == "Daily") {
+    return("15 minutes")
+  }
+  if (base_unit == "1/2 hours" & gemmu_iswi == "Daily") {
+    return("30 minutes")
+  }
   if (base_unit == "hours" & gemmu_iswi == "Daily") {
     return("hour")
   }
@@ -120,10 +126,16 @@ Saldae_rate_n_gemmu_f <- function(tisefka = NULL,base_unit = NULL,target_ts= NUL
   # base_unit <- tisefka_report$time_unit
   gemmu <- unlist(purrr::map(tisefka[, target_ts],  ~tezmer_i_gemmu(.x)))
   target_ts <- target_ts[gemmu]
-
+  if(length(target_ts)==0)return(NULL)
   akka_ukuden <- c("Seconds", "Minutes", "Hourly","1/2 Hourly","1/4 Hourly", "Daily", "Weekly", "Monthly", "Quarterly", "Yearly")
-  names(akka_ukuden) <- c("seconds", "minutes", "hours","1/2 hours","1/4 hours" ,"days", "weeks", "months", "quarters", "years")
-  full_dates <- dplyr::tbl_df(data.frame(date = seq(from = min(tisefka$date), to = max(tisefka$date), by = base_unit)))
+  names(akka_ukuden) <- c("seconds", "minutes", "hours","+30 minute","+15 minute" ,"days", "weeks", "months", "quarters", "years")
+
+  ukud_asurif <- c("sec", "min", "hour","30 min","15 min" ,"day", "week", "month", "quarter", "year")
+  ukud_isem   <- c("seconds", "minutes", "hours","1/2 hour","1/4 hour" ,"days", "weeks", "months", "quarters", "years")
+  names(ukud_asurif) <- ukud_isem
+
+  full_dates <- dplyr::tbl_df(data.frame(date = seq(from = min(tisefka$date), to = max(tisefka$date), by = ukud_asurif[base_unit])))
+
   tisefka <- full_dates %>% dplyr::left_join(tisefka, by = "date")
 
 
@@ -161,19 +173,42 @@ Saldae_rate_n_gemmu_f <- function(tisefka = NULL,base_unit = NULL,target_ts= NUL
 #' Display Growth rate results in chart.
 #' @author Farid Azouaou
 #' @param gemu_tisefka data frame containing growth rate
+#' @param target_variable growth rate type linear_Develop, linear_growth_rate, log_growth_rate
+#' @param plot_type whether it's a linear or bar chart
 #' @return plotly object
 #' @export
 
-sekned_gemmu_f <- function(gemu_tisefka = NULL) {
+sekned_gemmu_f <- function(gemmu_tisefka = NULL,target_variable = "linear_growth_rate",plot_type="bar") {
+
+  status_f <- function(x){
+    if(is.na(x))return(NA)
+    if(sign(x)>0)return("increase")
+    if(sign(x)<0)return("decrease")
+    return("stable")
+  }
+
+  plot_colors_f <- function(x){
+    if(x=="increase")return("seagreen")
+    if(x=="decrease")return("orange")
+    if(x=="stable")return("grey")
+    return(NULL)
+  }
+  status <- sapply(dplyr::pull(gemmu_tisefka,!!target_variable),status_f)
+  plot_colors <- sapply(na.omit(unique(status)),plot_colors_f)
+  gemmu_tisefka <- gemmu_tisefka%>%dplyr::select(date,!!target_variable)%>%
+    mutate(status = status)
   #----------------------------
-  gemmu_tisefka <- reshape2::melt(gemu_tisefka, id.vars = "date")
+  plot_mode <- "lines"
+  if(plot_type=="bar")plot_mode<-NULL
+
   p <- gemmu_tisefka %>%
-    plotly::plot_ly(x = ~date, y = ~value, type = "scatter", mode = "lines", color = ~variable) %>%
+    plotly::plot_ly(x = ~date, y = ~base::get(target_variable), type = plot_type, mode = plot_mode,
+                    color =~status,colors = plot_colors) %>%
     plotly::layout(
       xaxis = base::list(title = paste("Time"), tickangle = -45),
-      yaxis = base::list(title = "Growth Rate"),
+      yaxis = base::list(title = "Growth Rate %"),
       margin = base::list(b = 100),
-      barmode = "stack", legend = list(orientation = "h", x = 0.35, y = 100)
+      barmode = "stack", legend = list(orientation = "h", x = 0.35, y = 0)
     )
   p <- p %>% plotly::config(displaylogo = F)
   return(p)
