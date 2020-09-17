@@ -5,7 +5,7 @@
         ],
         "path" : "/R",
         "projectRelative" : true,
-        "query" : "Saldae_rate_n_gemmu_f",
+        "query" : "month(",
         "regex" : false
     }
 }

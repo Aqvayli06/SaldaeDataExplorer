@@ -170,7 +170,7 @@ detect_number_basis_units_in_upper_unit <- function(upper_unit = NULL, basis_uni
     return(3)
   }
   if (upper_unit == "quarters" & basis_unit == "weeks") {
-    last_date <- as.Date(paste(lubridate::year(last_date), month(last_date), lubridate::days_in_month(last_date), sep = "-"))
+    last_date <- as.Date(paste(lubridate::year(last_date), lubridate::month(last_date), lubridate::days_in_month(last_date), sep = "-"))
     wk <- seq.Date(from = as.Date(last_date), length.out = 93, by = "-7 days")
     stop("ur tefriw ara")
     return(length(which(lubridate::quarter(wk) == lubridate::quarter(last_date))))
