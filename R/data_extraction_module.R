@@ -53,6 +53,25 @@ ghred_tisefka_aqerru <- function(input_file = NULL, tala = NULL, tawriqt = NULL)
   return(tisefka)
 }
 
+
+#' possible date variables
+#' @description Check if the intput element is a date based on a given date format
+#' @author Farid Azouaou
+#' @param tisefka a character containing date information
+#' @return idk
+#' @export
+detect_possible_date_var <- function(tisefka = NULL){
+    date_vars <- unlist(tisefka%>%purrr::map(~length(IsDate(gsub("\\/|_|\\.","-",head(.x,2000))))>0))
+    return(names(date_vars)[date_vars])
+}
+
+
+as_POSIXct_without_error <- function(x,SA_date_format,tz="CET"){
+  tryCatch(as.POSIXct(x,tz="CET",SA_date_format),error = NA)
+}
+
+
+
 #' Saldae : is Date
 #' @description Check if the intput element is a date based on a given date format
 #' @author Farid Azouaou
@@ -62,13 +81,33 @@ ghred_tisefka_aqerru <- function(input_file = NULL, tala = NULL, tawriqt = NULL)
 #' @export
 
 IsDate <- function(mydate, SA_date_format) {
+  mydate<- na.omit(mydate)
   if(class(mydate[1])=="Date")return(TRUE)
-  tryCatch(!is.na(base::as.POSIXct(mydate,format = SA_date_format)),
-    error = function(err) {
-      FALSE
-    }
+
+  date_format_yellan <- c(
+    "%Y-%m-%d", "%Y%m%d","%m-%d-%Y","%d-%m-%Y","%Y-%B-%d","%Y-%m","%Y%m","%m-%Y","%m%Y","%m%d","%d%m","%m-%d","%d-%m"
   )
+  date_format_yellan <- c(date_format_yellan,gsub("%Y","%y",date_format_yellan))
+  # date_format_yellan <- c(date_format_yellan,"%Y")
+
+  time_extension <- stringr::str_count(mydate[1], pattern = ":")
+
+  if(time_extension==1)date_format_yellan <- paste(date_format_yellan,"%H:%M")
+  if(time_extension==2)date_format_yellan <- paste(date_format_yellan,"%H:%M:%S")
+    names(date_format_yellan)<- date_format_yellan
+    mydate <- clean_date_vect(mydate)
+    valid_date_format <- unlist(date_format_yellan%>%purrr::map(~!any(is.na(as_POSIXct_without_error(mydate,SA_date_format = .x,tz="CET")))))
+    valid_date_format<- date_format_yellan[valid_date_format]
+    return(head(valid_date_format,1))
 }
+
+if_is_date <- function(x = NULL){
+  x <- gsub("\\/|_","-",x)
+  date_formats <- c("ymd","dmy","mdy","my","md","dm")
+  valid_format <- date_formats%>%purrr::map(~ !any(is.na(lubridate::parse_date_time(na.omit(x),.x))))
+  return(date_formats[unlist(valid_format)])
+}
+
 
 #' Saldae duplicated dates in raw data
 #' @description check if there are duplicated dates in raw data and if possible create new variables based on that
@@ -78,10 +117,20 @@ IsDate <- function(mydate, SA_date_format) {
 #' @return logical statement
 #' @export
 
-tisefka_spread_yella <- function(tisefka = NULL, date_variable = NULL, SA_date_format=NULL,upper_bound = 60) {
-  if(IsDate(head(dplyr::pull(tisefka,date_variable)),SA_date_format =SA_date_format )==FALSE)return(NULL)
+tisefka_spread_yella <- function(tisefka = NULL, date_variable = NULL, SA_date_format=NULL,upper_bound = 101) {
+
+  if(is.null(tisefka))return(NULL)
+
+  SA_date_format <- IsDate(mydate = head(dplyr::pull(tisefka,date_variable),1000))
+
+  if(length(SA_date_format)==0)return(NULL)
+  tisefka <- tisefka%>%dplyr::select(-!!date_variable)
+
+  tisefka_class <- dlookr::get_class(tisefka)%>%dplyr::filter(class != "numeric")%>%
+    dplyr::pull(variable)%>%paste()
+  return(tisefka_class)
   date_index <- which(date_variable == colnames(tisefka))
-  if (date_index == 0)return(NULL)
+
   tisefka_diagnosis <- dlookr::diagnose(.data = tisefka)
   tisefka_diagnosis <- data.frame(tisefka_diagnosis, check.names = FALSE)
   rownames(tisefka_diagnosis) <- tisefka_diagnosis$variables
@@ -121,6 +170,11 @@ aggregation_fun<- function(aggregation_metric= NULL){
   }
 }
 
+clean_date_vect <- function(date_vect= NULL){
+  date_vect <- gsub("\\/|\\.|_","-",date_vect)
+  return(date_vect)
+}
+
 #' Saldae prepare data
 #' @description Prepare raw data using date_variable as row names
 #' @author Farid Azouaou
@@ -134,34 +188,30 @@ aggregation_fun<- function(aggregation_metric= NULL){
 #' @export
 
 sbed_tisefka <- function(tisefka = NULL, date_variable = NULL, SA_date_format = "YYYY-MM-DD",aggregation_metric=NULL, spread_value = NULL, spread_key = NULL) {
-  # SA_date_format <- paste(SA_date_format, "H:M:S")
-  SA_date_format <- SA_date_format_convert(SA_date_format)
 
-  if (is.null(tisefka)) {
-    return(NULL)
-  }
-  DATE_index <- which(date_variable == colnames(tisefka))
+  if(is.null(tisefka))return(NULL)
 
-  Date_telha <- IsDate(mydate = head(tisefka[, DATE_index]), SA_date_format = SA_date_format)
+  SA_date_format <- IsDate(mydate = head(dplyr::pull(tisefka,date_variable),1000))
 
-  if (!FALSE %in% Date_telha) {
-    colnames(tisefka)[DATE_index] <- "date"
+  if(length(SA_date_format)==0)return(NULL)
+    date_index <- which(date_variable==colnames(tisefka))
+    colnames(tisefka)[date_index] <- "date"
     if(class(tisefka$date)[1]!="Date"){
-      tisefka <- tisefka%>%mutate(date = as.POSIXct(date,format = SA_date_format))
+      tisefka <- tisefka%>%mutate(date = as.POSIXct(clean_date_vect(date),format = SA_date_format))
     }
-  } else {
-    return(NULL)
-  }
   if(!is.null(aggregation_metric)){
     my_aggregation_fun <- aggregation_fun(aggregation_metric = aggregation_metric)
     tisefka <- tisefka%>%dplyr::group_by(date)%>%
       dplyr::summarise_if(is.numeric, my_aggregation_fun, na.rm = TRUE)
   }
+
   if (!is.null(spread_value) & !is.null(spread_key)) {
     tisefka <- zuzer_tisefka(tisefka = tisefka , anwa = spread_value,f_anwa = spread_key)
   }
-  tisefka <- tisefka %>% dplyr::distinct(date, .keep_all = TRUE)%>%
-            dplyr::arrange(date)
+
+  # tisefka <- tisefka %>% dplyr::distinct(date, .keep_all = TRUE)%>%
+  #   dplyr::arrange(date)
+
   return(tisefka)
 }
 
@@ -189,7 +239,7 @@ SA_date_format_convert <- function(my_date_format = NULL){
   date_format_yellan <- gsub("DD","%d",date_format_yellan)
   date_format_yellan <- gsub("MON","%b",date_format_yellan)
   date_format_yellan <- gsub("MONTH","%B",date_format_yellan)
-return(date_format_yellan)
+return(gsub("\\/","-",date_format_yellan))
 }
 #' Saldae arrange  data
 #' @author Farid Azouaou

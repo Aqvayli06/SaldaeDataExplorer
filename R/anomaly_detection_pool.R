@@ -36,11 +36,15 @@ anomaly_to_DT_insight <- function(anomalies_set = NULL){
 #' @return a dygraph object
 #' @export
 SA_anomaly_charter <- function(anomaly_tisefka = NULL,target_variable = NULL){
-  anomaly_tisefka<-anomaly_tisefka[c("date","lower_bound", "observed", "upper_bound")]
-  rownames(anomaly_tisefka)<-anomaly_tisefka$date
+  anomaly_tisefka1 <<- anomaly_tisefka
+  anomaly_tisefka<-anomaly_tisefka[,c("date","lower_bound", "observed", "upper_bound","Anomalies")]
+  rownames(anomaly_tisefka) <- anomaly_tisefka$date
+  anomaly_tisefka2 <<- anomaly_tisefka
   data.frame(anomaly_tisefka,check.names = FALSE)%>%dplyr::select(-date)%>%
-    dygraphs::dygraph(main = "Anomaly Diagnostics") %>%
-    dygraphs::dySeries(c("lower_bound", "observed", "upper_bound"), label = target_variable)
+    dygraphs::dygraph(main = "Anomaly Diagnostics")%>%
+    dygraphs::dySeries(c("lower_bound", "observed", "upper_bound"), label = target_variable)%>%
+    dygraphs::dySeries("Anomalies", drawPoints = TRUE,color = "orange")%>%
+    dygraphs::dyRangeSelector()
 }
 
 #

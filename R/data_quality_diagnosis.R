@@ -58,8 +58,11 @@ data_diagnosis_f <- function(tisefka = NULL, categoricals_ukud = NULL, ukud_unit
   # rownames(output_data_quality[["beschreibung"]]) <- rownames(output_data_quality[["outliers"]]) <- output_data_quality[["beschreibung"]]$variable
 
   #----------------------------- afe-d ukuden yeddan akk d ukud_unit
-  categoricals <- output_data_quality$diagnosis[output_data_quality$diagnosis$unique_count < 8 & output_data_quality$diagnosis$unique_count > 1, "variables"]
+  categoricals <- output_data_quality$diagnosis[output_data_quality$diagnosis$unique_count < 100 & output_data_quality$diagnosis$unique_count > 1, "variables"]
   output_data_quality[["categoricals"]] <- categoricals$variables
+  categorical_values <- tisefka[,output_data_quality[["categoricals"]],drop=F]
+  output_data_quality[["categoricals_unique_values"]] <- categorical_values%>%purrr::map(~unique(.x))
+
   #-----------------------------------------------------------------
   return(output_data_quality)
 }

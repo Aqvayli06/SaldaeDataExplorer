@@ -7,10 +7,15 @@
 #' @return time stepoutput (hours, seconds, days , ... )
 #' @export
 detect_date_auto <- function(time_vect = NULL, n_new_dates = 1, include_start_date = FALSE) {
-  time_vect <- tail(time_vect, 1000)
+  time_vect <- tail(time_vect, 2000)
   time_jump <- round(abs(diff(as.POSIXct(time_vect))), 0)
   time_unit <- attributes(time_jump)$units
   # .
+  # time_unit <- time_vect%>%timetk::tk_get_timeseries_signature()%>%
+  #   dplyr::select(year,half,quarter,month,day,hour,minute,second)%>%
+  #   janitor::remove_constant()%>%colnames()%>%tail(1)%>%paste0("s")
+  # return(time_unit)
+
   time_jump <- head(plyr::count(time_jump)%>%dplyr::arrange(desc(freq)),2)$x
 
   if (365 %in% time_jump & time_unit == "days") {

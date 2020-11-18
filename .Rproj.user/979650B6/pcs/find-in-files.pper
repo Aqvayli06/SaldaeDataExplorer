@@ -5,7 +5,7 @@
         ],
         "path" : "/R",
         "projectRelative" : true,
-        "query" : "month(",
+        "query" : "upper_bound",
         "regex" : false
     }
 }

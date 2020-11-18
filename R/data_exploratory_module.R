@@ -555,6 +555,7 @@ sekned_tisefka_DT <- function(tisefka = NULL, gzem = 3) {
 
 Handson_exploration <- function(tisefka = NULL, tisefka_report = NULL, numeric_variables = NULL) {
 
+  numeric_variables <-dlookr::get_class(tisefka)%>%dplyr::filter(class=="numeric")%>%dplyr::pull(variable)%>%paste()
    date_vector<- tisefka$date
 
   tisefka <- tisefka[, numeric_variables, drop = F]

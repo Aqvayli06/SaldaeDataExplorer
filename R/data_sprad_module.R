@@ -24,7 +24,9 @@ ukud_format_complete <- function(ukud_format = NULL,ukud_vector = NULL){
 # tisefka <- room_occupancy_tax_by_month_statewide_1
 # mded_ukud_s_tsefka(tisefka = tisefka ,ukud_variables = ukud_variables,ukud_format = "%B-%Y")
 
-
+aggregate_lists <- function(y = NULL){
+  unlist(y%>%purrr::map(~sum(.x,na.rm = TRUE)))
+}
 
 #' Saldae prepare data: spread
 #' @description spread Data into multiple rows and have one uniqute date vector
@@ -39,7 +41,11 @@ zuzer_tisefka <- function(tisefka = NULL,anwa= NULL,f_anwa = NULL){
   tisefka <- tisefka%>%tidyr::pivot_wider(id_cols= date,
                                           names_from = f_anwa,
                                           values_from = anwa,
-                                          values_fill = list(seen = NA)
+                                          values_fill = list(NA)
                                           )
+  if("list"%in% dlookr::get_class(tisefka)$class){
+    tisefka<- tisefka%>%purrr::map_if(is.list,~aggregate_lists(.x))
+  }
+  tisefka <- tisefka%>%tibble::as.tibble()
   return(tisefka)
 }
