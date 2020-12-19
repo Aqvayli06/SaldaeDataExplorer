@@ -36,15 +36,25 @@ anomaly_to_DT_insight <- function(anomalies_set = NULL){
 #' @return a dygraph object
 #' @export
 SA_anomaly_charter <- function(anomaly_tisefka = NULL,target_variable = NULL){
-  anomaly_tisefka1 <<- anomaly_tisefka
   anomaly_tisefka<-anomaly_tisefka[,c("date","lower_bound", "observed", "upper_bound","Anomalies")]
   rownames(anomaly_tisefka) <- anomaly_tisefka$date
   anomaly_tisefka2 <<- anomaly_tisefka
-  data.frame(anomaly_tisefka,check.names = FALSE)%>%dplyr::select(-date)%>%
+
+  anomaly_events <- anomaly_tisefka%>%dplyr::filter(!is.na(Anomalies))%>%dplyr::pull(date)
+
+  anomaly_diag_graph <- data.frame(anomaly_tisefka,check.names = FALSE)%>%dplyr::select(-date)%>%
     dygraphs::dygraph(main = "Anomaly Diagnostics")%>%
-    dygraphs::dySeries(c("lower_bound", "observed", "upper_bound"), label = target_variable)%>%
-    dygraphs::dySeries("Anomalies", drawPoints = TRUE,color = "orange")%>%
+    dygraphs::dySeries("Anomalies", drawPoints = TRUE,color = "orange",pointSize = 5, pointShape = "circle")%>%
+    dygraphs::dySeries(c("lower_bound", "observed", "upper_bound"),color = "darkgreen", label = target_variable)%>%
     dygraphs::dyRangeSelector()
+
+  if(length(anomaly_events)>0){
+     for(anomaly_event in paste0(anomaly_events)){
+       anomaly_diag_graph<- anomaly_diag_graph%>%
+         dygraphs::dyEvent(as.POSIXct(anomaly_event),color ="orange")
+     }
+  }
+   return(anomaly_diag_graph)
 }
 
 #
